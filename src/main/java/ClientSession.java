@@ -25,7 +25,7 @@ public class ClientSession implements Runnable {
     }
     public void run() {
         try {
-            System.out.println("query to server at " + HttpServer.CURRENT_PORT + " port");
+            System.out.println("queries the server on port " + HttpServer.CURRENT_PORT + " port");
             String header = readHeader();
             String method = readMethod(header);
             if(!method.equals("GET") && !method.equals("HEAD")) {
@@ -84,7 +84,8 @@ public class ClientSession implements Runnable {
 
             }
         } catch (IOException e) {
-        } finally {
+        } catch (NullPointerException e) {
+        } finally{
             try {
                 socket.close();
             } catch (IOException e) {
@@ -96,7 +97,7 @@ public class ClientSession implements Runnable {
     private String readMethod(String firstLine) {
         int from = 0;
         int to = firstLine.indexOf(" ");
-        return firstLine.substring(from,to);
+        return from <= to ? firstLine.substring(from,to) : null;
     }
 
     private String readHeader() throws IOException{
@@ -196,34 +197,17 @@ public class ClientSession implements Runnable {
         return getFullContentType(ct);
     }
     private String getFullContentType(String end) {
-        String contentType = null;
-        if(end.equals("css")){
-            contentType = "text/css";
-        } else
-        if(end.equals("gif")){
-            contentType = "image/gif";
-        } else
-        if(end.equals("html")){
-            contentType = "text/html";
-        } else
-        if(end.equals("jpeg")){
-            contentType = "image/jpeg";
-        } else
-        if(end.equals("jpg")){
-            contentType = "image/jpeg";
-        } else
-        if(end.equals("js")){
-            contentType = "text/javascript";
-        } else
-        if(end.equals("png")){
-            contentType = "image/png";
-        } else
-        if(end.equals("swf")){
-            contentType = "application/x-shockwave-flash";
-        } else {
-            contentType = end;
+        switch (end) {
+            case "css": return "text/css";
+            case "gif": return "image/gif";
+            case "html": return "text/html";
+            case "jpeg": return "image/jpeg";
+            case "jpg": return "image/jpeg";
+            case "js": return "text/javascript";
+            case "png": return "image/png";
+            case "swf": return "application/x-shockwave-flash";
+            default: return end;
         }
-        return contentType;
     }
     private long getContentLength(String url) {
         String filePath = "./src/main/resources/"+DEFAULT_PATH+url;

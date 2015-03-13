@@ -1,1 +1,3 @@
-./logs
+
+target/classes/HttpServer.class
+target/classes/MyClientSession.class
