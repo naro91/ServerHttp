@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashSet;
+import java.util.Set;
 
 public class HttpServer {
     public static final int DEFAULT_PORT = 8080;
@@ -23,11 +25,12 @@ public class HttpServer {
             System.out.println("Exception !!! port " + port + " is blocked.");
             System.exit(-1);
         }
+
         while (true) {
             try {
-                Socket clientSocket = serverSocket.accept();
+                Socket clientSocket = serverSocket.accept();   // ожидаем подлючения нового клиента
                 ClientSession session = new ClientSession(clientSocket);
-                new Thread(session).start();
+                new Thread(session).start();  // обработка в новом потоке
             } catch (IOException e){
                 System.out.println("Exception !!! establish connection. ");
                 System.out.println(e.getMessage());
